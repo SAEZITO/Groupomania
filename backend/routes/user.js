@@ -1,12 +1,14 @@
-//----------------------- fichier présentant les routes user disponibles, à quel endpoint et leur fonction -----------------------//
-
+//Imports
 const express = require("express");
 const router = express.Router();
-
 const userCtrl = require("../controllers/user");
-const checkInputs = require("../middleware/check-inputs");
+const auth = require("../middleware/auth");
 
-router.post("/signup", checkInputs, userCtrl.signup);
+//Routage
+router.post("/signup", userCtrl.signup);
 router.post("/login", userCtrl.login);
+router.get("/me", userCtrl.userProfil);
+router.put("/update", auth, userCtrl.changePwd);
+router.delete("/delete", auth, userCtrl.deleteProfile);
 
 module.exports = router;

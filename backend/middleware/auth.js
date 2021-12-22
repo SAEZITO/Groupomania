@@ -1,19 +1,27 @@
-//----------------------- configuration protégeant les routes en vérifiant l'authentification avant envoi requêtes -----------------------//
-
+// Imports
 const jwt = require("jsonwebtoken");
-const config = require("../config.js");
+const config = require("../config/config.js");
 
+// Exportation de la fonction d'authentification
 module.exports = (req, res, next) => {
-  try {
-    const token = req.headers.authorization.split(" ")[1];
-    req.token = jwt.verify(token, `${config.JWT_TOKEN_SECRET}`);
+  // Récupération du token dans les paramètres
+  const authHeader = req.headers.authorization;
 
-    if (req.body.userId && req.body.userId !== req.token.userId) {
-      throw "UserId non valable !";
-    } else {
+  // Si l'utilisateur possède une autorisation,
+  // on déclare le token et on le vérifie, s'il n'y a pas
+  // d'erreur, on le next, sinon on renvoie un statut 403
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+
+    jwt.verify(token, config.JWT_TOKEN_SECRET, (err, user) => {
+      if (err) {
+        return res.status(403);
+      }
       next();
-    }
-  } catch {
-    res.status(401).json({ error: "Requête non authentifiée !" });
+    });
+  }
+  // Sinon, on renvoie le statut 401 Unauthorized
+  else {
+    res.status(401).json({ error: "accès non authorisé" });
   }
 };
