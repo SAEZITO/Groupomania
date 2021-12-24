@@ -26,20 +26,22 @@ exports.signup = (req, res) => {
   if (emailOk == true && mdpOK == true && usernameOk == true) {
     //Vérification si user n'existe pas déjà
     //TO DO => Vérifier l'username et l'email
-    models.User.findOne({
-      attributes: ["email"],
-      where: { email: email },
-    })
+    models.user
+      .findOne({
+        attributes: ["email"],
+        where: { email: email },
+      })
       .then((user) => {
         if (!user) {
           bcrypt.hash(password, 10, function (err, bcryptPassword) {
             // Création de l'user
-            const newUser = models.User.create({
-              email: email,
-              username: username,
-              password: bcryptPassword,
-              isAdmin: false,
-            })
+            const newUser = models.user
+              .create({
+                email: email,
+                username: username,
+                password: bcryptPassword,
+                isAdmin: false,
+              })
               .then((newUser) => {
                 res.status(201).json({ id: newUser.id });
               })
@@ -55,7 +57,7 @@ exports.signup = (req, res) => {
         res.status(500).json({ err });
       });
   } else {
-    console.log("un champ est mal rempli");
+    res.status(400).json({ error: "un champ est mal rempli" });
   }
 };
 
@@ -68,9 +70,10 @@ exports.login = (req, res) => {
     res.status(400).json({ error: "Il manque un paramètre" });
   }
   //Vérification si user existe
-  models.User.findOne({
-    where: { username: username },
-  })
+  models.user
+    .findOne({
+      where: { username: username },
+    })
     .then((user) => {
       if (user) {
         bcrypt.compare(
@@ -100,10 +103,11 @@ exports.login = (req, res) => {
 //Profil d'un user
 exports.userProfil = (req, res) => {
   let id = utils.getUserId(req.headers.authorization);
-  models.User.findOne({
-    attributes: ["id", "email", "username", "isAdmin"],
-    where: { id: id },
-  })
+  models.user
+    .findOne({
+      attributes: ["id", "email", "username", "isAdmin"],
+      where: { id: id },
+    })
     .then((user) => res.status(200).json(user))
     .catch((error) => res.status(500).json(error));
 };
@@ -117,9 +121,10 @@ exports.changePwd = (req, res) => {
   //Vérification regex du nouveau mot de passe
   if (verifInput.validPassword(newPassword)) {
     //Vérifie qu'il est différent de l'ancien
-    models.User.findOne({
-      where: { id: userId },
-    })
+    models.user
+      .findOne({
+        where: { id: userId },
+      })
       .then((user) => {
         console.log("user trouvé", user);
         bcrypt.compare(
@@ -133,10 +138,11 @@ exports.changePwd = (req, res) => {
                 .json({ error: "Vous avez entré le même mot de passe" });
             } else {
               bcrypt.hash(newPassword, 10, function (err, bcryptNewPassword) {
-                models.User.update(
-                  { password: bcryptNewPassword },
-                  { where: { id: user.id } }
-                )
+                models.user
+                  .update(
+                    { password: bcryptNewPassword },
+                    { where: { id: user.id } }
+                  )
                   .then(() =>
                     res.status(201).json({
                       confirmation: "mot de passe modifié avec succès",
@@ -160,28 +166,32 @@ exports.deleteProfile = (req, res) => {
   let userId = utils.getUserId(req.headers.authorization);
   if (userId != null) {
     //Recherche sécurité si user existe bien
-    models.User.findOne({
-      where: { id: userId },
-    }).then((user) => {
-      if (user != null) {
-        //Delete de tous les posts de l'user même s'il y en a pas
-        models.Post.destroy({
-          where: { userId: user.id },
-        })
-          .then(() => {
-            console.log("Tous les posts de cet user ont été supprimé");
-            //Suppression de l'utilisateur
-            models.User.destroy({
-              where: { id: user.id },
+    models.user
+      .findOne({
+        where: { id: userId },
+      })
+      .then((user) => {
+        if (user != null) {
+          //Delete de tous les posts de l'user même s'il y en a pas
+          models.post
+            .destroy({
+              where: { userId: user.id },
             })
-              .then(() => res.end())
-              .catch((err) => console.log(err));
-          })
-          .catch((err) => res.status(500).json(err));
-      } else {
-        res.status(401).json({ error: "Cet user n'existe pas" });
-      }
-    });
+            .then(() => {
+              console.log("Tous les posts de cet user ont été supprimé");
+              //Suppression de l'utilisateur
+              models.user
+                .destroy({
+                  where: { id: user.id },
+                })
+                .then(() => res.end())
+                .catch((err) => console.log(err));
+            })
+            .catch((err) => res.status(500).json(err));
+        } else {
+          res.status(401).json({ error: "Cet user n'existe pas" });
+        }
+      });
   } else {
     res.status(500).json({
       error: "Impossible de supprimer ce compte, contacter un administrateur",

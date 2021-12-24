@@ -1,12 +1,15 @@
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define("User", {
+  const user = sequelize.define("user", {
     email: DataTypes.STRING,
     username: DataTypes.STRING,
     password: DataTypes.STRING,
     isAdmin: DataTypes.BOOLEAN,
   });
-  User.associate = function (models) {
-    models.User.hasMany(models.Post);
+  user.associate = function (models) {
+    models.user.hasMany(models.post);
   };
-  return User;
+  user.associate = function (models) {
+    models.user.hasMany(models.comment);
+  };
+  return user;
 };

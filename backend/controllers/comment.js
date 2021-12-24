@@ -3,19 +3,20 @@ let models = require("../models");
 let utils = require("../utils/jwtUtils");
 const fs = require("fs");
 
-//Création d'un message
+//Création d'un commentaire
 exports.create = (req, res) => {
   //Declaration de l'url de l'image
   let attachmentURL;
-  //identifier qui créé le message
+  //identifier qui créé le commentaire et sur quel post
   let id = utils.getUserId(req.headers.authorization);
-  models.user
+  let postId = req.body.postId;
+  models.post
     .findOne({
-      attributes: ["id", "email", "username"],
-      where: { id: id },
+      attributes: ["id", "content", "attachement", "userId"],
+      where: { id: postId },
     })
-    .then((user) => {
-      if (user !== null) {
+    .then((post) => {
+      if (post !== null) {
         //Récupération du corps du post
         let content = req.body.content;
         if (req.file != undefined) {
@@ -28,14 +29,15 @@ exports.create = (req, res) => {
         if (content == null && attachmentURL == null) {
           res.status(400).json({ error: "Rien à publier" });
         } else {
-          models.post
+          models.comment
             .create({
               content: content,
               attachement: attachmentURL,
-              userId: user.id,
+              userId: id,
+              postId: post.id,
             })
-            .then((newPost) => {
-              res.status(201).json(newPost);
+            .then((newComment) => {
+              res.status(201).json(newComment);
             })
             .catch((err) => {
               res.status(500).json(err);
@@ -48,23 +50,27 @@ exports.create = (req, res) => {
     .catch((error) => res.status(500).json(error));
 };
 
-//Afficher les posts sur le mur
-exports.listMsg = (req, res) => {
-  models.post
+//Afficher les commentaires sur le post
+exports.listComs = (req, res) => {
+  let post = req.body.postId;
+
+  models.comment
     .findAll({
+      attributes: ["id", "postId", "userId", "content"],
+      where: { postId: post },
       order: [["createdAt", "DESC"]],
     })
-    .then((posts) => {
-      if (posts.length > 0) {
-        res.status(200).json(posts);
+    .then((comments) => {
+      if (comments.length > 0) {
+        res.status(200).json(comments);
       } else {
-        res.status(404).json({ error: "Pas de post à afficher" });
+        res.status(404).json({ error: "Pas de commentaires à afficher" });
       }
     })
     .catch((err) => res.status(500).json(err));
 };
 
-//Suppression d'un post
+//Suppression d'un commentaire
 exports.delete = (req, res) => {
   //req => userId, postId, user.isAdmin
   let userOrder = req.body.userIdOrder;
@@ -78,45 +84,52 @@ exports.delete = (req, res) => {
     .then((user) => {
       //Vérification que le demandeur est soit l'admin soit le poster (vérif aussi sur le front)
       if (user && (user.isAdmin == true || user.id == userOrder)) {
-        console.log("Suppression du post id :", req.body.postId);
-        models.post
+        console.log("Suppression du commentaire id :", req.body.comId);
+        models.comment
           .findOne({
-            where: { id: req.body.postId },
+            attributes: ["id", "postId", "userId", "content"],
+            where: { id: req.body.comId },
           })
-          .then((postFind) => {
-            if (postFind.attachement) {
-              const filename = postFind.attachement.split("/images/")[1];
+          .then((commentFind) => {
+            if (commentFind.attachement) {
+              const filename = commentFind.attachement.split("/images/")[1];
               console.log("teseeeest", filename);
               fs.unlink(`images/${filename}`, () => {
-                models.post
+                models.comment
                   .destroy({
-                    where: { id: postFind.id },
+                    where: { id: commentFind.id },
                   })
                   .then(() =>
-                    res.status(200).json({ message: "Le post est supprimé." })
+                    res
+                      .status(200)
+                      .json({ message: "Le commentaire est supprimé." })
                   )
                   .catch((err) => res.status(500).json(err));
               });
             } else {
-              models.post
+              models.comment
                 .destroy({
-                  where: { id: postFind.id },
+                  where: { id: commentFind.id },
                 })
                 .then(() =>
-                  res.status(200).json({ message: "Le post est supprimé." })
+                  res
+                    .status(200)
+                    .json({ message: "Le commentaire est supprimé." })
                 )
                 .catch((err) => res.status(500).json(err));
             }
           })
           .catch((err) => res.status(500).json(err));
       } else {
-        res.status(403).json("Utilisateur non autorisé à supprimer ce post");
+        res
+          .status(403)
+          .json("Utilisateur non autorisé à supprimer ce commentaire");
       }
     })
     .catch((error) => res.status(500).json(error));
 };
 
-//Modification d'un post
+//Modification d'un commentaire
 exports.update = (req, res) => {
   //récupération de l'id du demandeur pour vérification
   let userOrder = req.body.userIdOrder;
@@ -130,16 +143,18 @@ exports.update = (req, res) => {
     .then((user) => {
       //Vérification que le demandeur est soit l'admin soit le poster (vérif aussi sur le front)
       if (user && (user.isAdmin == true || user.id == userOrder)) {
-        console.log("Modif ok pour le post :", req.body.postId);
-        models.post
+        console.log("Modif ok pour le commentaire :", req.body.comId);
+        models.comment
           .update(
             {
               content: req.body.newText,
               attachement: req.body.newImg,
             },
-            { where: { id: req.body.postId } }
+            { where: { id: req.body.comId } }
           )
-          .then(() => res.end())
+          .then(() =>
+            res.status(202).json({ message: "le commentaire est modifié!" })
+          )
           .catch((err) => res.status(500).json(err));
       } else {
         res
