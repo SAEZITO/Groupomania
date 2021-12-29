@@ -2,19 +2,19 @@
   <div id="app">
     <headertop></headertop>
 
-    <router-view />
+    <router-view/>
   </div>
 </template>
 
 <script>
-import Header from "./components/Header.vue";
+import Header from "./components/Header.vue"
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
-    headertop: Header,
-  },
-};
+    'headertop': Header
+  }
+}
 </script>
 
 <style lang="scss">

@@ -1,4 +1,4 @@
-# goupomania_frontend
+# frontend
 
 ## Project setup
 ```
