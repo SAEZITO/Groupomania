@@ -1,13 +1,13 @@
-# Groupomania
+
 # GROUPOMANIA - Réseau social
 
 Ce projet à été réalisé dans le cadre de la formation de Développeur Web d'OpenClassrooms. 
 Ce projet consiste à construire un réseau social interne pour les employés de Groupomania facilitant 
-les interactions entre collègues. Le département RH de Groupomania a laissé libre cours à son imagination 
-pour les fonctionnalités du réseau et a imaginé plusieurs briques pour favoriser les échanges entre collègues.
+ainsi les interactions entre collègues. Le département RH de Groupomania a laissé libre cours à son imagination 
+pour les fonctionnalités du réseau et a imaginé plusieurs possibilités pour favoriser les échanges entre collègues.
 
 ##### Les contraintes :
-- Utilisation d'un base de données relationnelles avec SQL
+- Utilisation d'une base de données relationnelles avec SQL
 - Utilisation d'un Framework javascript au choix pour le Front-End
 
 ## Fonctionnalitées
@@ -25,9 +25,8 @@ Ce réseau social à été créé avec les fonctionnalitées CRUD.
         <li>Créer un compte</li>
         <li>Se connecter avec son compte</li>
         <li>Supprimer un compte</li>
-        <li>Modifier la photo de son profil</li>
+        <li>Modifier son profil</li>
         <li>Voir tous les utilisateurs</li>
-        <li>Voir un seul utilisateur</li>
       </ul>
     </td>
     <td>
@@ -50,7 +49,7 @@ Ce réseau social à été créé avec les fonctionnalitées CRUD.
         <li>Écrire un commentaire</li>
         <li>Modifier un commentaire</li>
         <li>Supprimer un commentaire</li>
-        <li>Voir tous les commentaires</li>
+        <li>Voir tous les commentaires d'un post</li>
       </ul>
     </td>
     <td>
@@ -64,21 +63,7 @@ Ce réseau social à été créé avec les fonctionnalitées CRUD.
 </table>
 
 
-## Fabriqué avec
-<div>
-  <img height="25em" src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white">
-  <img height="25em" src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D">
-  <img height="25em" src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white">
-</div>
 
-<br>
-
-En détail :
-* [VS Code](https://code.visualstudio.com/) - Editeur de codes
-* [Vue.js](https://fr.vuejs.org/) - Framework front-end
-* [Express.js](https://expressjs.com/fr/starter/installing.html) - Framework pour Node.js
-* [Wampserver](https://www.wampserver.com/) - Création de serveur en local
-* [MariaDB](https://sql.sh/sgbd/mariadb) - Système de gestion de base de données (fork de MySQL)
 
 ## Installation
 
@@ -88,7 +73,7 @@ En détail :
 
 #### En suite...
 
-pour le dossier **BackP7Api** :
+pour le dossier **Backend** :
 ```
 npm install
 ```
@@ -102,7 +87,7 @@ npm start
 
 #### Puis...
 
-pour le dossier **FrontP7App** :
+pour le dossier **Frontend** :
 ```
 npm install
 ```
@@ -111,11 +96,3 @@ pour démarer le Front :
 ```
 npm run serve
 ```
-
-## Me contacter
-
-<div>
-  <a href="https://www.linkedin.com/in/fabio-ramoslopes/" target="_blank"><img height="40em" src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a>
-    <a href="https://github.com/FabioDevCode" target="_blank"><img height="40em" src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a>
-</div>
-
