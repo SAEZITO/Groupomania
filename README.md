@@ -78,7 +78,7 @@ pour le dossier **Backend** :
 npm install
 ```
 
-Assurez-vous d'avoir une base données **SQL** créée et de remplir les champs du fichier **.env.example** et le renommer **.env**
+Assurez-vous d'avoir une base données **SQL** créée et de remplir les champs du fichier **.env.example** et le renommer **.env** puis de créer un dossier **images**
 
 pour démarrer le Back :
 ```
