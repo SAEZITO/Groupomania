@@ -1,20 +1,31 @@
 module.exports = (sequelize, DataTypes) => {
-  const post = sequelize.define(
-    "post",
-    {
-      content: DataTypes.STRING,
-      attachement: DataTypes.STRING,
+  const Post = sequelize.define("Post", {
+    
+    message: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },   
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
-    {}
-  );
-  post.associate = function (models) {
-    // associations can be defined here
-    models.post.hasMany(models.comment);
-    models.post.belongsTo(models.user, {
+    like: {
+      type: DataTypes.INTEGER
+    },
+    dislike: {
+      type: DataTypes.INTEGER
+    } 
+  });
+
+  Post.associate = (models) => {
+    Post.belongsTo(models.User, {
       foreignKey: {
         allowNull: false,
       },
+      onDelete: "CASCADE",
     });
+    Post.hasMany(models.Comment);
   };
-  return post;
+
+  return Post;
 };

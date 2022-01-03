@@ -1,40 +1,51 @@
 <template>
-  <div id="app">
-    <headertop></headertop>
-
-    <router-view/>
-  </div>
+  <v-app>
+    <v-main class="test">
+      <PageHeader />
+      <br>
+      
+      <v-container class="mt-12">
+       
+        
+        <router-view/>
+      </v-container>
+      
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import Header from "./components/Header.vue"
+import { mapActions } from 'vuex';
+import PageHeader from '@/components/Header.vue'
+
+
+
+
 
 export default {
   name: 'App',
+
+  data: () => ({
+    //
+  }),
   components: {
-    'headertop': Header
+    PageHeader, 
+    
+    
+
+  },
+  methods: {
+    ...mapActions([
+      'fetchAccessToken'
+    ]),
+  },
+  created() {
+    this.fetchAccessToken();
   }
-}
+};
 </script>
-
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+<style lang="scss" scoped>
+.test {
+  background-color: #f2f2f2;
 }
 </style>

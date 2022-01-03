@@ -17,5 +17,5 @@ module.exports = {
   DB_NAME: process.env.DB_NAME,
   HOST: process.env.HOST || "localhost",
   PORT: process.env.PORT || 3000,
-  DIALECT: process.env.DIALECT || mysql,
+  DIALECT: process.env.DIALECT || " mysql",
 };

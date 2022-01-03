@@ -1,16 +1,15 @@
-//Import
 const express = require("express");
-const bodyParser = require("body-parser");
-
-const userRoutes = require("./routes/user");
-const postRoutes = require("./routes/post");
+const app = express();
+const db = require("./models");
 
 const path = require("path");
 
-//création application Express
-const app = express();
+const postRoutes = require("./routes/post.routes");
+const userRoutes = require("./routes/user.routes");
 
-//Résolution erreur CORS
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -23,15 +22,14 @@ app.use((req, res, next) => {
   );
   next();
 });
+// {force:true}
+db.sequelize.sync().then(() => {
+  console.log("Drop and re-sync db.");
+});
 
-//Parser les corps des requête
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
-//Middleware
 app.use("/images", express.static(path.join(__dirname, "images")));
 
-app.use("/api/user", userRoutes);
-app.use("/api/post", postRoutes);
+app.use("/api/posts", postRoutes);
+app.use("/api/auth", userRoutes);
 
 module.exports = app;

@@ -1,50 +1,87 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import createPersistedState from "vuex-persistedstate";
+
+import UserServices from "@/services/UserServices";
+import PostServices from "@/services/PostServices";
 
 Vue.use(Vuex);
 
-let user = localStorage.getItem("user");
-if (!user) {
-  user = {
-    id: 0,
-    token: "",
-  };
-} else {
-  user = JSON.parse(user);
-}
-
 export default new Vuex.Store({
-  // On enregistre un modele du user de base
   state: {
-    status: "",
-    user: {
-      id: 0,
-      token: "",
-      username: "",
-      isAdmin: false,
+    token: null,
+    user: null,
+    UserId: null,
+    isUserLoggedIn: false,
+    // message: [],
+    posts: [],
+    
+  },
+  getters: {
+    user(state) {
+      return state.user;
     },
   },
-  // On défini des fonctions qui serviront de manière globale
   mutations: {
-    // On défini un user via les informations de connexion
-    initUser(state, data) {
-      console.log("abc", data);
-      state.user.id = data.userid;
-      state.user.username = data.username;
-      state.user.isAdmin = data.isAdmin;
+    setToken(state, token) {
+      state.token = token;
+      if (token) {
+        state.isUserLoggedIn = true;
+      } else {
+        state.isUserLoggedIn = false;
+      }
     },
-    // On remet la valeur de l'id et du token en null et on supprime le token du localStorage
-    logout: function (state) {
-      state.user = {
-        id: 0,
-        token: "",
-      };
-      localStorage.removeItem("token");
+    setUserId(state, UserId) {
+      state.UserId = UserId;
+    },
+    // setMessage(state, message) {
+    //   state.message = message;
+    // },
+    SET_USER(state, user) {
+      state.user = user;
+    },
+    SET_POSTS(state, posts) {
+      state.posts = posts;
+    },
+    SET_USER_ID(state, user) {
+      state.user = user;
     },
   },
-  actions: {},
+  actions: {
+    setToken({ commit }, token) {
+      commit("setToken", token);
+    },
+    setUserId({ commit }, UserId) {
+      commit("setUserId", UserId);
+    },
+    setUser({ commit }, user) {
+      commit("SET_USER", user);
+    },
+
+    fetchAccessToken({ commit }) {
+      commit("setToken", localStorage.getItem("accessToken"));
+      
+    },
+    setMessage({ commit }, message) {
+      commit("setMessage", message);
+    },
+    
+    getOneUser({ commit }) {
+      let id = this.$route.params.id;
+      const response = UserServices.getOneUser(id);
+      const user = response.data;
+      commit("SET_USER_ID", user);
+      console.log(response);
+    },
+    async getPosts({ commit }) {
+      const response = await PostServices.getAllPosts();
+      const posts = response.data.sort((a, b) => {
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+        return dateB - dateA;
+      });
+      commit("SET_POSTS", posts);
+      console.log(response);
+    },
+  },
   modules: {},
-  // Appel d'un plugin permettant d'actualiser la page et de ne pas perdre les données du state
-  plugins: [createPersistedState()],
 });
