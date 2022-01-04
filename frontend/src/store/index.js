@@ -12,9 +12,7 @@ export default new Vuex.Store({
     user: null,
     UserId: null,
     isUserLoggedIn: false,
-    // message: [],
     posts: [],
-    
   },
   getters: {
     user(state) {
@@ -59,12 +57,11 @@ export default new Vuex.Store({
 
     fetchAccessToken({ commit }) {
       commit("setToken", localStorage.getItem("accessToken"));
-      
     },
     setMessage({ commit }, message) {
       commit("setMessage", message);
     },
-    
+
     getOneUser({ commit }) {
       let id = this.$route.params.id;
       const response = UserServices.getOneUser(id);

@@ -33,8 +33,7 @@
             autocomplete="off"
           ></v-text-field>
 
-          <!-- <p v-if="loginError">{{ loginError }}</p>
-      <p v-if="loginSuccessful">Login Successful</p> -->
+
           <br />
           <v-row>
             <v-btn
@@ -57,25 +56,32 @@
 </template>
 
 <script>
-// import { mapState, mapActions } from "vuex";
 import AuthServices from "@/services/AuthServices";
+
+
 export default {
   data() {
     return {
-      // username: "",
       email: "",
       password: "",
       error: null,
     };
   },
-  //   computed: {
-  //     ...mapState(["loggingIn", "loginError", "loginSuccessful"]),
-  //   },
-  methods: {
-    async login() {
+
+    mounted: function () {
+        if(this.$store.state.isUserLoggedIn != false) {
+          const router = this.$router;
+        setTimeout(function () {
+          router.push("/posts");
+        }, 10);
+        }
+        console.log(this.$store.state.isUserLoggedIn)
+    },
+  
+  
+  async login() {
       try {
         const response = await AuthServices.login({
-          // username: this.username,
           email: this.email,
           password: this.password,
         });
@@ -89,7 +95,6 @@ export default {
         const router = this.$router;
         setTimeout(function () {
           router.push("/posts");
-          location.reload(true);
         }, 10);
       } catch (error) {
         console.log(error);
@@ -103,24 +108,7 @@ export default {
       }, 10);
     },
 
-    // ...mapActions(["doLogin"]),
-    // login() {
-    //   this.doLogin({
-    //     username: this.username,
-    //     email: this.email,
-    //     password: this.password,
-    //   });
-    //   const router = this.$router;
-    //   setTimeout(function () {
-    //     router.push("/posts");
-    //   }, 10);
-    // },
-  },
-  // name: "HelloWorld",
-  // props: {
-  //   msg: String,
-  // },
-};
+  };
 </script>
 
 <style lang="scss" scoped>

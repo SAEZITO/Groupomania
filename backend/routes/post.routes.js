@@ -15,8 +15,4 @@ router.put("/:id", auth, multer, postCtrl.updatePost);
 
 router.delete("/:id", auth, postCtrl.deletePost);
 
-router.post("/comment", auth, postCtrl.createComment);
-
-router.delete("/comment/:id", auth, postCtrl.deleteComment);
-
 module.exports = router;
