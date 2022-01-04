@@ -6,20 +6,13 @@ import Signup from "@/components/Signup.vue";
 import Posts from "@/components/Posts.vue";
 // import OnePost from "@/components/OnePost.vue";
 import Profil from "@/components/Profil.vue";
-import Users from "@/components/AllUser.vue"
-
+import Users from "@/components/AllUser.vue";
 
 Vue.use(VueRouter);
 // const user = JSON.parse(localStorage.getItem("user"));
 // let id = user.id;
 
 const routes = [
-  // {
-  //   path: "/",
-  //   name: "Home",
-  //   component: Home,
-  // },
- 
   {
     path: "/",
     name: "Login",
@@ -35,11 +28,6 @@ const routes = [
     name: "Posts",
     component: Posts,
   },
-  // {
-  //   path: "/posts/:id",
-  //   name: "OnePost",
-  //   component: OnePost,
-  // }, 
   {
     path: "/profil/:id",
     name: "Profil",
@@ -50,12 +38,6 @@ const routes = [
     name: "Users",
     component: Users,
   },
-  // {
-  //   path: "/profil/:id",
-  //   name: "Profil",
-  //   component: Profil,
-  // },
-
 ];
 
 const router = new VueRouter({
@@ -63,7 +45,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  document.title = to.name
-  next()
+  document.title = to.name;
+  next();
 });
 export default router;

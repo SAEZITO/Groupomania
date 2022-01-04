@@ -37,7 +37,7 @@
             <div>
               <v-card-title class="d-flex justify-center">
                 <span class="text font-weight-light">
-                  Posté le: {{ dateParser(post.createdAt) }}
+                  Posté le : {{ dateParser(post.createdAt) }}
                 </span>
               </v-card-title>
             </div>
@@ -158,7 +158,7 @@
                   <v-tooltip top>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
-                        v-if="UserId == comment.UserId"
+                        v-if="UserId == comment.UserId || userAdmin == true"
                         @click="deleteComment(comment.id)"
                         dark
                         v-bind="attrs"

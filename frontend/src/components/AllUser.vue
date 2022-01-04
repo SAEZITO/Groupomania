@@ -60,13 +60,13 @@ export default {
       await UserServices.deleteAccount(id);
       setTimeout(function () {
         location.reload(true);
-      }, 10);
+      }, 100);
     },
     profil(userId) { //fonction pour aller à la page profil
       const router = this.$router;
       setTimeout(function () {
         router.push(`/profil/${userId}`);
-      }, 10);
+      }, 100);
     },
   },
 };

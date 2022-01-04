@@ -73,7 +73,6 @@ export default {
 
 <style lang="scss" scoped>
 .logo {
-  // width: 10rem;
   cursor: pointer;
   width: 10rem;
 }

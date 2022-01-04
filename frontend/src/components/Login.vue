@@ -70,7 +70,7 @@ export default {
   
 mounted: function () {
         if(this.$store.state.isUserLoggedIn != false) {
-            this.$router.push('/accueil')
+            this.$router.push('Posts')
             return;
         }
         console.log(this.$store.state.isUserLoggedIn)
@@ -80,7 +80,7 @@ mounted: function () {
     async login() {
       try {
         const response = await AuthServices.login({
-          // username: this.username,
+
           email: this.email,
           password: this.password,
         });
@@ -95,7 +95,7 @@ mounted: function () {
         setTimeout(function () {
           router.push("/posts");
           location.reload(true);
-        }, 10);
+        }, 100);
       } catch (error) {
         console.log(error);
       }
@@ -105,7 +105,7 @@ mounted: function () {
       const router = this.$router;
       setTimeout(function () {
         router.push("/signup");
-      }, 10);
+      }, 100);
     },
   },
 };
@@ -115,7 +115,6 @@ mounted: function () {
 .v-toolbar__title {
   color: white;
   font-weight: bold;
-  // text-decoration: underline;
   font-size: 2rem;
   font-display: roboto;
 }
@@ -130,10 +129,7 @@ img {
   width: 95%;
   height: auto;
 }
-// a {
-//   font-weight: bold;
-//   color: red;
-// }
+
 .v-application a {
   color: #01579b;
   text-decoration: underline;

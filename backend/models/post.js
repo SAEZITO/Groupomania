@@ -1,20 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
   const Post = sequelize.define("Post", {
-    
     message: {
       type: DataTypes.STRING,
       allowNull: false,
-    },   
+    },
     imageUrl: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    like: {
-      type: DataTypes.INTEGER
-    },
-    dislike: {
-      type: DataTypes.INTEGER
-    } 
   });
 
   Post.associate = (models) => {

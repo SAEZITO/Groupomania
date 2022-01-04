@@ -1,4 +1,6 @@
 const { Comment } = require("../models");
+const { Post } = require("../models");
+const { User } = require("../models");
 const fs = require("fs");
 
 //Section commentaire

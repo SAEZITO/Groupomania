@@ -4,7 +4,7 @@
       <PageHeader />
       <br>
       
-      <v-container class="mt-12">
+      <v-container class="mt-10">
        
         
         <router-view/>
@@ -35,6 +35,7 @@ export default {
 
   },
   methods: {
+    //Permet de mettre à jour l'état de l'utilisateur (connecté ou non) grace au token du local storage
     ...mapActions([
       'fetchAccessToken'
     ]),

@@ -131,9 +131,9 @@
         <div>
           <v-col>
             <span v-if="user.id == UserId">
-              Vous être membre depuis: {{ dateParser(user.createdAt) }}
+              Vous être membre depuis le : {{ dateParser(user.createdAt) }}
             </span>
-            <span v-else>Membre depuis: {{ dateParser(user.createdAt) }}</span>
+            <span v-else>Membre depuis le : {{ dateParser(user.createdAt) }}</span>
           </v-col>
           <v-col v-if="user.isAdmin == userAdmin">
             <v-btn @click="showUsers">Afficher les utilisateurs</v-btn>
@@ -153,7 +153,7 @@
               color="red darken-1"
               @click="deleteAccount"
             >
-              Supprimer mon compte
+              Supprimer le compte
             </v-btn>
           </v-row>
         </v-col>
@@ -213,10 +213,12 @@ export default {
     async deleteAccount() {
       this.id = this.$route.params.id;
       await UserServices.deleteAccount(this.id);
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
       const router = this.$router;
       setTimeout(function () {
-        router.push("/");
-      }, 10);
+        router.push("Login");
+      }, 100);
     },
     async updateUser() {
       try {
