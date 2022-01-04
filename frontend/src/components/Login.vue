@@ -56,32 +56,31 @@
 </template>
 
 <script>
+// import { mapState, mapActions } from "vuex";
 import AuthServices from "@/services/AuthServices";
-
-
 export default {
   data() {
     return {
+      // username: "",
       email: "",
       password: "",
       error: null,
     };
   },
-
-    mounted: function () {
+  
+mounted: function () {
         if(this.$store.state.isUserLoggedIn != false) {
-          const router = this.$router;
-        setTimeout(function () {
-          router.push("/posts");
-        }, 10);
+            this.$router.push('/accueil')
+            return;
         }
         console.log(this.$store.state.isUserLoggedIn)
     },
-  
-  
-  async login() {
+
+  methods: {
+    async login() {
       try {
         const response = await AuthServices.login({
+          // username: this.username,
           email: this.email,
           password: this.password,
         });
@@ -95,6 +94,7 @@ export default {
         const router = this.$router;
         setTimeout(function () {
           router.push("/posts");
+          location.reload(true);
         }, 10);
       } catch (error) {
         console.log(error);
@@ -107,8 +107,8 @@ export default {
         router.push("/signup");
       }, 10);
     },
-
-  };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
