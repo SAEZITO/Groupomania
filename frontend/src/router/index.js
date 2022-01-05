@@ -9,9 +9,15 @@ import Profil from "@/components/Profil.vue";
 import Users from "@/components/AllUser.vue";
 
 Vue.use(VueRouter);
-// const user = JSON.parse(localStorage.getItem("user"));
-// let id = user.id;
 
+const user = JSON.parse(localStorage.getItem("user"));
+function guardMyroute(to, from, next) {
+  if (user && user.id > 0) {
+    next();
+  } else {
+    next("/");
+  }
+}
 const routes = [
   {
     path: "/",
@@ -25,18 +31,24 @@ const routes = [
   },
   {
     path: "/posts",
+    beforeEnter: guardMyroute,
     name: "Posts",
     component: Posts,
+    meta: { title: "Post" },
   },
   {
     path: "/profil/:id",
+    beforeEnter: guardMyroute,
     name: "Profil",
     component: Profil,
+    meta: { title: "Profil" },
   },
   {
     path: "/users",
+    beforeEnter: guardMyroute,
     name: "Users",
     component: Users,
+    meta: { title: "User" },
   },
 ];
 
@@ -44,8 +56,4 @@ const router = new VueRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  document.title = to.name;
-  next();
-});
 export default router;

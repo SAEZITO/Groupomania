@@ -111,31 +111,6 @@
               </v-col>
             </div>
 
-            <!-- --------------------------------------- -->
-            <!-- Bouton pour afficher le bloc commentaire -->
-            <!-- ---------------------------------------- -->
-            <div>
-              <v-col>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      color="primary"
-                      dark
-                      v-bind="attrs"
-                      v-on="on"
-                      icon
-                      @click=";(show = !show), commentShow(post, post.id)"
-                    >
-                      <v-icon large color="purple accent-3">
-                        mdi-message-text
-                      </v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Afficher les commentaires</span>
-                </v-tooltip>
-                <span>{{ post.Comments.length }}</span>
-              </v-col>
-            </div>
             <!-- ------------------- -->
             <!-- Bloc commentaire -->
             <!-- ------------------- -->
@@ -175,6 +150,36 @@
               </div>
             </v-expand-transition>
           </div>
+          
+            <!-- --------------------------------------- -->
+            <!-- Bouton pour afficher le bloc commentaire -->
+            <!-- ---------------------------------------- -->
+            <div>
+              <v-col>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      color="primary"
+                      dark
+                      v-bind="attrs"
+                      v-on="on"
+                      icon
+                      @click=";(show = !show), commentShow(post, post.id)"
+                    >
+                      <v-icon large color="purple accent-3">
+                        mdi-message-text
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Afficher les commentaires</span>
+                </v-tooltip>
+                <span>{{ post.Comments.length }}</span>
+              </v-col>
+            </div>
+            
+      <!-- ------------------------------------------- -->
+      <!-- Boite de dialog pour ajouter un commentaire -->
+      <!-- -------------------------------------------- -->
         </v-card>
       </div>
 
@@ -210,9 +215,6 @@
         </v-card>
       </v-dialog>
 
-      <!-- ------------------------------------------- -->
-      <!-- Boite de dialog pour ajouter un commentaire -->
-      <!-- -------------------------------------------- -->
 
       <div>
         <v-dialog v-model="comment" width="500">
@@ -252,6 +254,8 @@
 import PostServices from '@/services/PostServices'
 import NewPost from '@/components/NewPost.vue'
 import WelcomeToUser from '@/components/WelcomeToUser.vue'
+import { mapGetters } from 'vuex'
+import store from "@/store";
 
 let user = JSON.parse(localStorage.getItem('user'))
 
@@ -279,14 +283,13 @@ export default {
     }
   },
   computed: {
-    posts() {
-      return this.$store.state.posts
-    },
-  },
-
-  mounted() {
-    this.$store.dispatch('getPosts')
-  },  
+    ...mapGetters([
+          'posts'
+    ]),
+   },
+  created() {
+          store.dispatch('getPosts');
+     }, 
   components: {
     NewPost,
     WelcomeToUser,

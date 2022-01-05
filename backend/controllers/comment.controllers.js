@@ -26,6 +26,32 @@ exports.createComment = async (req, res, next) => {
     res.status(404).json({ error: "Mauvaise requête" });
   }
 };
+//Supprimer un commentaire
+exports.listComment = (req, res, next) => {
+  Comment.findAll({
+    where: { postId: req.params },
+    order: [["createdAt", "DESC"]],
+  })
+    .then((res) => {
+      res.status(200).json(res);
+    })
+    .catch((error) => {
+      return res.status(500).send({ error });
+    });
+};
+//Supprimer un commentaire
+exports.listAComment = (req, res, next) => {
+  const commentParams = req.params;
+  Comment.findOne({
+    where: { id: commentParams },
+  })
+    .then((comment) => {
+      res.status(200).json(comment, { message: "Commentaire trouvé" });
+    })
+    .catch((error) => {
+      return res.status(500).send({ error });
+    });
+};
 
 //Supprimer un commentaire
 exports.deleteComment = (req, res, next) => {

@@ -24,6 +24,7 @@ exports.signup = async (req, res, next) => {
       token: jwt.sign({ UserId: user.id }, `${process.env.JWT_RAND_SECRET}`, {
         expiresIn: "24h",
       }),
+      user: user,
     });
   } catch (error) {
     res.status(400).json({ error: "Cet e-mail est déjà utilisé" });
@@ -59,8 +60,6 @@ exports.login = async (req, res, next) => {
 };
 //-----------------------------------------------------------------//
 
-
-
 // Pour supprimer un utilisateur
 exports.deleteAccount = async (req, res, next) => {
   try {
@@ -84,8 +83,7 @@ exports.deleteAccount = async (req, res, next) => {
 //Afficher tous les comptes
 exports.getAllAccounts = async (req, res, next) => {
   try {
-    const allAccounts = await User.findAll({
-    });
+    const allAccounts = await User.findAll({});
     res.status(200).json(allAccounts);
   } catch (error) {
     res.status(404).json({ error });

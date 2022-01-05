@@ -18,15 +18,14 @@ export default new Vuex.Store({
     user(state) {
       return state.user;
     },
+    posts(state) {
+      return state.posts;
+    },
   },
   mutations: {
     setToken(state, token) {
       state.token = token;
-      if (token) {
-        state.isUserLoggedIn = true;
-      } else {
-        state.isUserLoggedIn = false;
-      }
+      state.isUserLoggedIn = !!token;
     },
     setUserId(state, UserId) {
       state.UserId = UserId;
@@ -41,7 +40,7 @@ export default new Vuex.Store({
       state.posts = posts;
     },
     SET_USER_ID(state, user) {
-      state.user = user;
+      state.UserId = user;
     },
   },
   actions: {
@@ -71,13 +70,8 @@ export default new Vuex.Store({
     },
     async getPosts({ commit }) {
       const response = await PostServices.getAllPosts();
-      const posts = response.data.sort((a, b) => {
-        const dateA = new Date(a.createdAt).getTime();
-        const dateB = new Date(b.createdAt).getTime();
-        return dateB - dateA;
-      });
-      commit("SET_POSTS", posts);
-      console.log(response);
+      commit("SET_POSTS", response.data);
+      console.log(response.data);
     },
   },
   modules: {},

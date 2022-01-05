@@ -6,11 +6,19 @@ const fs = require("fs");
 // Afficher tous les messages
 exports.getPost = async (req, res, next) => {
   Post.findAll({
+    order: [["createdAt", "DESC"]],
     include: [
       { model: User, attributes: ["first_name", "avatar", "last_name"] },
       {
         model: Comment,
-        attributes: ["id", "text", "first_name", "last_name", "UserId"],
+        attributes: [
+          "id",
+          "text",
+          "first_name",
+          "last_name",
+          "UserId",
+          "PostId",
+        ],
       },
     ],
   })

@@ -94,7 +94,6 @@ mounted: function () {
         const router = this.$router;
         setTimeout(function () {
           router.push("/posts");
-          location.reload(true);
         }, 100);
       } catch (error) {
         console.log(error);

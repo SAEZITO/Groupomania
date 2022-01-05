@@ -82,19 +82,20 @@ export default {
   methods: {
     async register() {
       try {
-        await AuthServices.signup({          
+        const response = await AuthServices.signup({          
           first_name: this.first_name,
           last_name: this.last_name,
           email: this.email,
           password: this.password,
         });
-        // this.$store.dispatch("setToken", response.data.token);
-        // this.$store.dispatch("setUser", response.data.UserId);
+        this.$store.dispatch("setToken", response.data.token);
+        this.$store.dispatch("setUser", response.data.UserId);
+        localStorage.setItem("user", JSON.stringify(response.data));
 
         const router = this.$router;
         setTimeout(function () {
-          router.push("/");
-        }, 10);
+          router.push("/posts");
+        }, 100);
       } catch (error) {
         this.error = error.response.data.error;
       }
@@ -103,7 +104,7 @@ export default {
       const router = this.$router;
       setTimeout(function () {
         router.push("/");
-      }, 10);
+      }, 100);
     },
   },
 };

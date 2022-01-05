@@ -239,7 +239,6 @@ export default {
     editTheName() {
       this.editname = true;
       this.usernameEdit = this.user;
-      location.reload(true);
     },
     async updateTheName() {
       try {

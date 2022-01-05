@@ -44,13 +44,10 @@
 </template>
 
 <script>
-let user = JSON.parse(localStorage.getItem("user"));
+
 export default {
   data() {
     return {
-      first_name: user.first_name,
-      last_name: user.last_name,
-      UserId: user.id,
     };
   },
   methods: {
@@ -73,6 +70,7 @@ export default {
 
 <style lang="scss" scoped>
 .logo {
+
   cursor: pointer;
   width: 10rem;
 }
