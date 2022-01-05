@@ -33,6 +33,7 @@
             autocomplete="off"
           ></v-text-field>
 
+        <div class="error" v-html="error" />
 
           <br />
           <v-row>
@@ -96,7 +97,7 @@ mounted: function () {
           router.push("/posts");
         }, 100);
       } catch (error) {
-        console.log(error);
+        this.error = error.response.data.error;
       }
     },
 

@@ -44,8 +44,7 @@
           autocomplete="off"
         ></v-text-field>
 
-        <!-- <p v-if="loginError">{{ loginError }}</p>
-      <p v-if="loginSuccessful">Login Successful</p> -->
+
         <div class="error" v-html="error" />
         <br />
         <v-row align="center" justify="space-around">
