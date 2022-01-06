@@ -10,8 +10,8 @@ import Users from "@/components/AllUser.vue";
 
 Vue.use(VueRouter);
 
-const user = JSON.parse(localStorage.getItem("user"));
 function guardMyroute(to, from, next) {
+  const user = JSON.parse(localStorage.getItem("user"));
   if (user && user.id > 0) {
     next();
   } else {

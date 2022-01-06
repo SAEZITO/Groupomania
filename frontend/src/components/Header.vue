@@ -14,20 +14,20 @@
     </v-col>
     <v-spacer></v-spacer>
     <v-btn
-      v-if="!$store.state.isUserLoggedIn"
+      v-if="(!$store.state.isUserLoggedIn && url != '/')"
       class="ma-1"
       color="white"
       plain
-      @click="navigateTo({ name: 'Login' })"
+      @click="navigateTo({ path: '/' })"
     >
       Se connecter
     </v-btn>
     <v-btn
-      v-if="!$store.state.isUserLoggedIn"
+      v-if="(!$store.state.isUserLoggedIn && url != '/signup')"
       class="ma-1"
       color="white"
       plain
-      @click="navigateTo({ name: 'Signup' })"
+      @click="navigateTo({ path: '/signup' })"
     >
       S'inscrire
     </v-btn>
@@ -48,10 +48,12 @@
 export default {
   data() {
     return {
+      url: this.$router.currentRoute.path,
     };
   },
   methods: {
     navigateTo(route) {
+      this.url = route.path;
       this.$router.push(route);
     },
     logout() { // fonction pour la decconnexion de l'utilisateur

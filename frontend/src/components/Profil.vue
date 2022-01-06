@@ -187,7 +187,7 @@ export default {
       id: "",
       user: "",
       UserId: user.id,
-      userAdmin: user.isAdmin,
+      UserAdmin: user.isAdmin,
       last_name: "",
       first_name: "",
       password: "",
@@ -222,7 +222,10 @@ export default {
     },
     async updateUser() {
       try {
-        let data = new FormData();
+        let data = new FormData({
+           userId: this.UserId,
+          userAdmin: this.UserAdmin,
+        });
         if (this.file !== null) {
           data.append("image", this.file);
         }

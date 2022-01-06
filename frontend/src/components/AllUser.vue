@@ -21,11 +21,11 @@
         <a :href="`mailto:${user.email}`"> {{user.email}} </a>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col v-if="user.id == UserId || userAdmin === true">
+      <v-col v-if="user.id == UserId || UserAdmin === true">
         <v-btn
           class="btn align-self-center ma-2 rounded-xl"
           color="red darken-1"
-          @click="deleteAccount(user.id)"
+          @click="deleteAccount(user.id, formData)"
         >
           Supprimer le compte
         </v-btn>
@@ -48,16 +48,20 @@ export default {
     return {
       users: "",
       UserId: user.id,
-      userAdmin: user.isAdmin,
-    };
+      UserAdmin: user.isAdmin,
+      formData: {
+            userId: this.UserId,
+            userAdmin: this.UserAdmin,
+        },
+    }
   },
   async mounted() { //fonction qui permet de réccupérer tous les utilisateurs
     this.users = (await UserServices.getAllUsers()).data;
     console.log("ici", this.users);
   },
   methods: {
-    async deleteAccount(id) { //fonction pour supprimer un compte
-      await UserServices.deleteAccount(id);
+    async deleteAccount(id, data) { //fonction pour supprimer un compte
+      await UserServices.deleteAccount(id, data);
       setTimeout(function () {
         location.reload(true);
       }, 100);

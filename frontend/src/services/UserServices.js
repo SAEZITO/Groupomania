@@ -1,8 +1,8 @@
 import Api from "@/services/Api";
 
 export default {
-  deleteAccount(id) {
-    return Api().delete("auth/accounts/" + id);
+  deleteAccount(id, data) {
+    return Api().delete("auth/accounts/" + id, data);
   },
   getAllUsers(data) {
     return Api().get("auth/accounts/", data);

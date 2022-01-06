@@ -64,16 +64,22 @@ exports.login = async (req, res, next) => {
 exports.deleteAccount = async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { id: req.params.id } });
-    if (user.avatar !== null) {
-      const filename = user.avatar.split("/images/")[1];
-      fs.unlink(`images/${filename}`, () => {
-        // sil' y a une photo on la supprime et on supprime le compte
-        User.destroy({ where: { id: req.params.id } });
-        res.status(200).json({ message: "Utilisateur supprimé" });
-      });
+    if (req.body.userId == user.id || req.body.userAdmin == true) {
+      if (user.avatar !== null) {
+        const filename = user.avatar.split("/images/")[1];
+        fs.unlink(`images/${filename}`, () => {
+          // sil' y a une photo on la supprime et on supprime le compte
+          User.destroy({ where: { id: req.params.id } });
+          res.status(200).json({ message: "Utilisateur supprimé" });
+        });
+      } else {
+        User.destroy({ where: { id: req.params.id } }); // on supprime le compte
+        res.status(200).json({ message: "utilisateur supprimé" });
+      }
     } else {
-      User.destroy({ where: { id: req.params.id } }); // on supprime le compte
-      res.status(200).json({ message: "utilisateur supprimé" });
+      res.status(401).json({
+        message: "Vous n'êtes pas autorisé à supprimer cet utilisateur",
+      });
     }
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
@@ -108,44 +114,49 @@ exports.modifyAccount = async (req, res, next) => {
   try {
     let newPhoto;
     let user = await User.findOne({ where: { id: req.params.id } }); // on trouve le user
+    if (req.body.userId == user.id || req.body.userAdmin == true) {
+      if (req.file && user.avatar) {
+        newPhoto = `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`;
+        const filename = user.avatar.split("/images/")[1];
+        fs.unlink(`images/${filename}`, (err) => {
+          // s'il y avait déjà une photo on la supprime
+          if (err) console.log(err);
+          else {
+            console.log(`Deleted file: images/${filename}`);
+          }
+        });
+      } else if (req.file) {
+        newPhoto = `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`;
+      }
+      if (newPhoto) {
+        user.avatar = newPhoto;
+      }
+      if (req.body.first_name) {
+        user.first_name = req.body.first_name;
+      }
+      if (req.body.last_name) {
+        user.last_name = req.body.last_name;
+      }
+      if (req.body.password) {
+        user.password = await bcrypt.hash(req.body.password, 10);
+      }
 
-    if (req.file && user.avatar) {
-      newPhoto = `${req.protocol}://${req.get("host")}/images/${
-        req.file.filename
-      }`;
-      const filename = user.avatar.split("/images/")[1];
-      fs.unlink(`images/${filename}`, (err) => {
-        // s'il y avait déjà une photo on la supprime
-        if (err) console.log(err);
-        else {
-          console.log(`Deleted file: images/${filename}`);
-        }
+      const newUser = await user.save({
+        fields: ["first_name", "last_name", "avatar", "password"],
+      }); // on sauvegarde les changements dans la bdd
+      res.status(200).json({
+        user: newUser,
+        messageRetour: "Votre profil a bien été modifié",
       });
-    } else if (req.file) {
-      newPhoto = `${req.protocol}://${req.get("host")}/images/${
-        req.file.filename
-      }`;
+    } else {
+      res.status(401).json({
+        message: "Vous n'êtes pas autorisé à modifier cet utilisateur",
+      });
     }
-    if (newPhoto) {
-      user.avatar = newPhoto;
-    }
-    if (req.body.first_name) {
-      user.first_name = req.body.first_name;
-    }
-    if (req.body.last_name) {
-      user.last_name = req.body.last_name;
-    }
-    if (req.body.password) {
-      user.password = await bcrypt.hash(req.body.password, 10);
-    }
-
-    const newUser = await user.save({
-      fields: ["first_name", "last_name", "avatar", "password"],
-    }); // on sauvegarde les changements dans la bdd
-    res.status(200).json({
-      user: newUser,
-      messageRetour: "Votre profil a bien été modifié",
-    });
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
   }

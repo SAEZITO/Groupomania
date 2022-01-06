@@ -81,7 +81,6 @@ mounted: function () {
     async login() {
       try {
         const response = await AuthServices.login({
-
           email: this.email,
           password: this.password,
         });
@@ -93,6 +92,7 @@ mounted: function () {
         this.$store.dispatch("setToken", response.data.token);
         this.$store.dispatch("setUserId", response.data.UserId);
         const router = this.$router;
+        location.reload(true);
         setTimeout(function () {
           router.push("/posts");
         }, 100);
