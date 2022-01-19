@@ -13,13 +13,13 @@ export default {
   modifyPost(id, data) {
     return Api().put("posts/" + id, data);
   },
-  deletePost(id) {
-    return Api().delete("posts/" + id);
+  deletePost(id, data) {
+    return Api().delete("posts/" + id, data);
   },
   createComment(data) {
     return Api().post("comment", data);
   },
-  deleteComment(id) {
-    return Api().delete("comment/" + id);
+  deleteComment(id, data) {
+    return Api().delete("comment/" + id, data);
   },
 };

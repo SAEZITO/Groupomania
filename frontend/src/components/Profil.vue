@@ -14,17 +14,17 @@
           color="blue darken-4"
         >
           <v-col>
-            <v-toolbar-title v-if="user.id == UserId">
+            <v-toolbar-title v-if="user.id == this.id">
               Bienvenue, {{ user.first_name }} {{ user.last_name }}
             </v-toolbar-title>
             <v-toolbar-title v-else>
-              Profil de {{ user.first_name }} {{ user.last_name }}
+              Profil de {{ profile.first_name }} {{ profile.last_name }}
             </v-toolbar-title>
           </v-col>
           <v-btn
             text
             @click="editTheName()"
-            v-if="user.id == UserId || userAdmin === true"
+            v-if="user.id == this.id || user.isAdmin === true"
           >
             <v-icon class="mx-2" color="grey lighten-1">mdi-pencil</v-icon>
             <span>Modifier</span>
@@ -49,14 +49,6 @@
                   :rules="inputRules"
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" sm="12">
-                <v-text-field
-                  v-model="password"
-                  label="Changer mon mot de passe"
-                  required
-                  :rules="inputPasswordRules"
-                ></v-text-field>
-              </v-col>
 
               <v-divider></v-divider>
 
@@ -77,18 +69,18 @@
       <div class="d-flex flex-column-reverse flex-md-row justify-center">
         <div class="d-flex mt-4">
           <v-col class="d-flex flex-column align-center pa-5">
-            <span v-if="user.id == UserId" class="mb-2">
+            <span v-if="user.id == this.id" class="mb-2">
               Votre photo de profil
             </span>
             <span v-else class="mb-2">Photo de profil</span>
             <div class="d-flex flex-column">
               <v-avatar class="profile" color="grey" size="164" tile>
-                <v-img :src="user.avatar"></v-img>
+                <v-img :src="profile.avatar"></v-img>
               </v-avatar>
               <v-btn
                 text
                 @click="elementToEdit"
-                v-if="user.id == UserId || userAdmin === true"
+                v-if="user.id == this.id || user.isAdmin === true"
               >
                 <v-icon class="mx-2" color="light-blue darken-4">
                   mdi-pencil
@@ -130,12 +122,12 @@
         <v-spacer></v-spacer>
         <div>
           <v-col>
-            <span v-if="user.id == UserId">
-              Vous être membre depuis le : {{ dateParser(user.createdAt) }}
+            <span v-if="user.id == this.id">
+              Vous être membre depuis le : {{ dateParser(profile.createdAt) }}
             </span>
-            <span v-else>Membre depuis le : {{ dateParser(user.createdAt) }}</span>
+            <span v-else>Membre depuis le : {{ dateParser(profile.createdAt) }}</span>
           </v-col>
-          <v-col v-if="user.isAdmin == userAdmin">
+          <v-col v-if="user.isAdmin == true">
             <v-btn @click="showUsers">Afficher les utilisateurs</v-btn>
           </v-col>
         </div>
@@ -144,7 +136,7 @@
         <v-col>
           <br />
           <v-row
-            v-if="user.id == UserId || userAdmin === true"
+            v-if="user.id == this.id || user.isAdmin === true"
             align="center"
             justify="space-around"
           >
@@ -185,9 +177,8 @@ export default {
         (v) => v.length >= 6 || "minimum 6 caractères", //les règles sur l'input
       ],
       id: "",
-      user: "",
-      UserId: user.id,
-      UserAdmin: user.isAdmin,
+      user: user,
+      profile: "",
       last_name: "",
       first_name: "",
       password: "",
@@ -202,8 +193,8 @@ export default {
     try {
       this.id = this.$route.params.id;
       const response = await UserServices.getOneUser(this.id);
-      this.user = response.data;
-      console.log(this.user);
+      this.profile = response.data;
+      console.log(this.profile);
     } catch (error) {
       console.log(error);
     }
@@ -212,7 +203,7 @@ export default {
   methods: {
     async deleteAccount() {
       this.id = this.$route.params.id;
-      await UserServices.deleteAccount(this.id);
+      await UserServices.deleteAccount(this.id, this.user);
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
       const router = this.$router;
@@ -222,16 +213,18 @@ export default {
     },
     async updateUser() {
       try {
-        let data = new FormData({
-           userId: this.UserId,
-          userAdmin: this.UserAdmin,
-        });
+        const fd = new FormData()
+        fd.append('userId', this.user.id)
+        fd.append('userAdmin', this.user.isAdmin)
+        fd.append('first_name', this.usernameEdit.first_name)
+        fd.append('last_name', this.usernameEdit.last_name)
         if (this.file !== null) {
-          data.append("image", this.file);
+          fd.append('image', this.file)
         }
         this.id = this.$route.params.id;
-        await UserServices.updateUser(this.id, data);
-        location.reload(true);
+        const res = await UserServices.updateUser(this.id, fd);
+          localStorage.removeItem('user');
+          localStorage.setItem("user", JSON.stringify(res.data.user));
       } catch (error) {
         console.log(error);
       }
@@ -246,14 +239,15 @@ export default {
     async updateTheName() {
       try {
         let data = {
+          userId: this.user.id,
+          userAdmin: this.user.isAdmin,
           first_name: this.usernameEdit.first_name,
           last_name: this.usernameEdit.last_name,
-          password: this.password,
         };
         this.id = this.$route.params.id;
         const res = await UserServices.updateUser(this.id, data);
-        console.log(res);
-        location.reload(true);
+          localStorage.removeItem('user');
+          localStorage.setItem("user", JSON.stringify(res.data.user));
       } catch (error) {
         console.log(error);
       }

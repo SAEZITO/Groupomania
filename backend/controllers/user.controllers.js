@@ -62,6 +62,7 @@ exports.login = async (req, res, next) => {
 
 // Pour supprimer un utilisateur
 exports.deleteAccount = async (req, res, next) => {
+  console.log(req);
   try {
     const user = await User.findOne({ where: { id: req.params.id } });
     if (req.body.userId == user.id || req.body.userAdmin == true) {
@@ -112,9 +113,14 @@ exports.getOneAccount = async (req, res, next) => {
 // test de modif
 exports.modifyAccount = async (req, res, next) => {
   try {
+    console.log(req.body);
     let newPhoto;
     let user = await User.findOne({ where: { id: req.params.id } }); // on trouve le user
-    if (req.body.userId == user.id || req.body.userAdmin == true) {
+    if (
+      req.body.userId == user.id ||
+      req.body.userAdmin == "true" ||
+      req.body.userAdmin == true
+    ) {
       if (req.file && user.avatar) {
         newPhoto = `${req.protocol}://${req.get("host")}/images/${
           req.file.filename
@@ -141,12 +147,9 @@ exports.modifyAccount = async (req, res, next) => {
       if (req.body.last_name) {
         user.last_name = req.body.last_name;
       }
-      if (req.body.password) {
-        user.password = await bcrypt.hash(req.body.password, 10);
-      }
 
       const newUser = await user.save({
-        fields: ["first_name", "last_name", "avatar", "password"],
+        fields: ["first_name", "last_name", "avatar"],
       }); // on sauvegarde les changements dans la bdd
       res.status(200).json({
         user: newUser,

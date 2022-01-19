@@ -88,31 +88,34 @@ exports.updatePost = async (req, res, next) => {
     let newImage;
 
     let post = await Post.findOne({ where: { id: req.params.id } });
-
-    if (req.file) {
-      newImage = `${req.protocol}://${req.get("host")}/images/${
-        req.file.filename
-      }`;
-      if (post.imageUrl) {
-        const filename = post.imageUrl.split("/images/")[1];
-        fs.unlink(`images/${filename}`, (err) => {
-          if (err) console.log(err);
-          else {
-            console.log(`Deleted file: images/${filename}`);
-          }
-        });
+    if (req.body.userId == post.UserId || req.body.userAdmin == true) {
+      if (req.file) {
+        newImage = `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`;
+        if (post.imageUrl) {
+          const filename = post.imageUrl.split("/images/")[1];
+          fs.unlink(`images/${filename}`, (err) => {
+            if (err) console.log(err);
+            else {
+              console.log(`Deleted file: images/${filename}`);
+            }
+          });
+        }
+        post.imageUrl = newImage;
       }
+      if (req.body.message) {
+        post.message = req.body.message;
+      }
+      const newPost = await post.save({
+        fields: ["message", "imageUrl"],
+      });
+      res.status(200).json({ newPost, message: "Le post a été modifié" });
+    } else {
+      res
+        .status(401)
+        .json({ message: "Vous n'etes pas autorisé à modifier le Post!" });
     }
-    if (req.body.message) {
-      post.message = req.body.message;
-    }
-    post.imageUrl = newImage;
-    const newPost = await post.save({
-      fields: ["message", "imageUrl"],
-    });
-    res
-      .status(200)
-      .json({ newPost: newPost, message: "Le post a été modifié" });
   } catch (error) {
     return res.status(500).send({ error });
   }
@@ -124,15 +127,21 @@ exports.deletePost = async (req, res, next) => {
     const postFound = await Post.findOne({
       where: { id: req.params.id },
     });
-    if (postFound.imageUrl != null) {
-      const filename = postFound.imageUrl.split("/images/")[1];
-      fs.unlink(`images/${filename}`, () => {
-        Post.destroy({ where: { id: req.params.id } });
-      });
-      res.status(200).json({ message: "Post supprimé !" });
+    if (req.body.userId == postFound.userId || req.body.userAdmin == true) {
+      if (postFound.imageUrl != null) {
+        const filename = postFound.imageUrl.split("/images/")[1];
+        fs.unlink(`images/${filename}`, () => {
+          Post.destroy({ where: { id: req.params.id } });
+        });
+        res.status(200).json({ message: "Post supprimé !" });
+      } else {
+        await Post.destroy({ where: { id: req.params.id } });
+        res.status(200).json({ message: "Post supprimé !" });
+      }
     } else {
-      await Post.destroy({ where: { id: req.params.id } });
-      res.status(200).json({ message: "Post supprimé !" });
+      res
+        .status(401)
+        .json({ message: "Vous n'etes pas autorisé à supprimer le Post!" });
     }
   } catch (error) {
     res.status(500).json({ error });

@@ -72,12 +72,12 @@
               <v-col
                 cols="2"
                 class="pa-0 d-flex text-center justify-end align-end"
-                v-if="post.UserId == UserId || userAdmin === true"
+                v-if="post.UserId == UserId || UserAdmin === true"
               >
                 <v-speed-dial>
                   <template v-slot:activator>
                     <v-btn color="purple lighten-1" dark>
-                      <v-icon v-if="userAdmin">mdi-close</v-icon>
+                      <v-icon v-if="UserAdmin">mdi-close</v-icon>
                       <v-icon v-else>mdi-plus</v-icon>
                     </v-btn>
                   </template>
@@ -133,7 +133,7 @@
                   <v-tooltip top>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
-                        v-if="UserId == comment.UserId || userAdmin == true"
+                        v-if="UserId == comment.UserId || UserAdmin == true"
                         @click="deleteComment(comment.id)"
                         dark
                         v-bind="attrs"
@@ -272,7 +272,7 @@ export default {
       file: '',
       fileName: '',
       UserId: user.id,
-      userAdmin: user.isAdmin,
+      UserAdmin: user.isAdmin,
       first_name: user.first_name,
       last_name: user.last_name,
       messageEdit: new Object(),
@@ -324,8 +324,9 @@ export default {
         if (this.file !== null) {
           fd.append('image', this.file)
         }
-        await PostServices.createPost(fd)
-        location.reload(true)
+        console.log(fd);
+        await PostServices.createPost(fd);
+        location.reload(true);
       } catch (error) {
         this.error = error.response.data.error
       }
@@ -342,10 +343,12 @@ export default {
     // ///////////////////////////////////
     async editMessage(messageId) {
       try {
-        let data = {
-          message: this.messageEdit.message,
+        let data =  {
+        message: this.messageEdit.message,
+        userId: this.UserId,
+        userAdmin: this.UserAdmin,
         }
-        const res = await PostServices.modifyPost(`${messageId}`, data)
+        const res = await PostServices.modifyPost(messageId, data)
         console.log(res)
       } catch (error) {
         this.error = error.response.data.error
@@ -355,7 +358,12 @@ export default {
     //Fonction pour supprimer un post
     // //////////////////////////////////
     async deleteMessage(messageId) {
-      await PostServices.deletePost(`${messageId}`)
+      let data = {
+         userId: this.UserId,
+         userAdmin: this.UserAdmin,
+      }
+      console.log(data);
+      await PostServices.deletePost(messageId, data)
       location.reload(true)
     },
     // ////////////////////////////////////
@@ -381,11 +389,16 @@ export default {
       }
     },
     // //////////////////////////////////
-    //Fonction pour supprimer un post
+    //Fonction pour supprimer un commentaire
     // //////////////////////////////////
     async deleteComment(commentId) {
-      await PostServices.deleteComment(`${commentId}`)
+      const data = {
+         userId: this.UserId,
+         userAdmin: this.UserAdmin,
+      };
+      await PostServices.deleteComment(`${commentId}`, data)
       location.reload(true)
+              console.log(data);
     },
     // /////////////////////////////////////////////////
     // fonction pour transformer la date sur les messages

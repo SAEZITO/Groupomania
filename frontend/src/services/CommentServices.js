@@ -4,8 +4,8 @@ export default {
   createComment(data) {
     return Api().post("comment", data);
   },
-  deleteComment(id) {
-    return Api().delete("comment/" + id);
+  deleteComment(id, data) {
+    return Api().delete("comment/" + id, data);
   },
   getComment(postId) {
     return Api().get("comment/" + postId);
